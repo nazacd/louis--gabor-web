@@ -20,6 +20,7 @@ export const ru = {
   hero: {
     kicker: "Мужская обувь · Ташкент",
     cta: "Каталог",
+    view: "Смотреть модель",
     pause: "Пауза",
     play: "Продолжить",
   },
@@ -64,6 +65,7 @@ export const ru = {
     otherColors: "Также",
     size: "Размер",
     chooseSize: "Размер",
+    sizeHint: "Выбранный размер попадёт в сообщение — наличие уточним в переписке.",
     order: "Написать в Telegram",
     call: "Позвонить",
     payment: "Оплата",

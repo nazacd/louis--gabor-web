@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getDict, href } from "@/i18n/config";
 import { site } from "@/data/site";
-import { colors, hasStudio, paymentMethods, products, shop, sizeRange, typeName, type ColorKey, type Product } from "@/data/catalog";
+import { colors, hasStudio, paymentMethods, products, shop, typeName, type ColorKey, type Product } from "@/data/catalog";
 import { formatPrice, media } from "@/lib/asset";
 import { useUI } from "./Providers";
 import { PairStage, Swatches } from "./PairStage";
@@ -33,34 +33,34 @@ export function ProductView({ product }: { product: Product }) {
     .sort((a, b) => Number(hasStudio(b)) - Number(hasStudio(a)))
     .slice(0, 4);
 
+  // в таблице только то, чего нет выше
   const facts: [string, string][] = [
-    [t.product.sku, product.sku],
-    [t.product.type, typeName(product.type, locale)],
-    [t.product.sizes, sizeRange(product)],
-    [t.product.colors, product.colors.map((c) => colors[c].name[locale]).join(", ")],
+    ...(shots.length > 0 && product.colors.length > 1 ? ([[t.product.colors, product.colors.map((c) => colors[c].name[locale]).join(", ")]] as [string, string][]) : []),
     ...(product.sole ? ([[t.product.sole, product.sole]] as [string, string][]) : []),
   ];
 
+  // нижняя панель на телефоне появляется, когда основная кнопка ушла вверх
+  const cta = useRef<HTMLDivElement>(null);
+  const [showBar, setShowBar] = useState(false);
+  useEffect(() => {
+    const el = cta.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setShowBar(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="page">
-      <div className="container-x wrap grid gap-12 pt-6 lg:grid-cols-12 lg:gap-16 lg:pt-10">
+      <div className="container-x wrap grid gap-x-16 gap-y-12 pt-6 lg:grid-cols-12 lg:pt-10">
         {/* ---------- Пара ---------- */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 lg:row-start-1">
           {studio ? (
             <>
               <PairStage product={product} active={active} className="aspect-[4/3]" sizes="(min-width: 1024px) 58vw, 100vw" priority preload />
               <div className="mt-6">
                 <Swatches product={product} active={active} onChange={setActive} size="w-[92px]" />
               </div>
-              {activeShot && (
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  {([1, 2] as const).map((i) => (
-                    <div key={i} className="aspect-square overflow-hidden">
-                      <img src={media.detail(activeShot.image, i)} alt="" loading="lazy" className="h-full w-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
             </>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -98,8 +98,19 @@ export function ProductView({ product }: { product: Product }) {
           )}
         </div>
 
+        {/* ---------- Детали (на телефоне — после блока покупки) ---------- */}
+        {studio && activeShot && (
+          <div className="order-last grid grid-cols-2 gap-4 lg:order-none lg:col-span-7 lg:row-start-2">
+            {([1, 2] as const).map((i) => (
+              <div key={i} className="aspect-square max-w-[640px] overflow-hidden">
+                <img src={media.detail(activeShot.image, i)} alt="" loading="lazy" className="h-full w-full object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* ---------- Информация ---------- */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
           <div className="lg:sticky" style={{ top: "calc(var(--top-offset) + 32px)" }}>
             <div className="flex items-start justify-between gap-4">
               <Link href={href(locale, `/catalog/?t=${product.type}`)} className="label text-muted transition-colors hover:text-accent">
@@ -110,7 +121,7 @@ export function ProductView({ product }: { product: Product }) {
             <h1 className="display mt-4 text-[48px] md:text-[64px]">{product.name[locale]}</h1>
             <div className="mt-5 flex items-baseline justify-between gap-4 border-b border-line pb-6">
               <span className="label num text-muted">{product.sku}</span>
-              <span className="price text-[20px]">{formatPrice(product.price, locale)}</span>
+              <span className="price text-[24px] font-medium">{formatPrice(product.price, locale)}</span>
             </div>
 
             <div className="mt-6 text-[14px]">
@@ -126,7 +137,7 @@ export function ProductView({ product }: { product: Product }) {
 
             <div className="mt-8">
               <div className="label text-muted">{t.product.chooseSize}</div>
-              <div className="mt-3 grid grid-cols-4 border-l border-t border-line sm:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]" style={{ ["--n" as string]: allSizes.length }}>
+              <div className="mt-3 grid border-l border-t border-line [grid-template-columns:repeat(var(--n),minmax(0,1fr))]" style={{ ["--n" as string]: allSizes.length }}>
                 {allSizes.map((s) => (
                   <button
                     key={s}
@@ -143,14 +154,17 @@ export function ProductView({ product }: { product: Product }) {
               </div>
             </div>
 
-            <div className="mt-8 grid gap-2">
+            <p className="mt-3 text-[13px] text-muted">{t.product.sizeHint}</p>
+
+            <div ref={cta} className="mt-8">
               <a href={telegram} target="_blank" rel="noreferrer" className="btn btn-ink w-full">
                 <TelegramIcon width={16} height={16} />
                 {t.product.order}
               </a>
-              <a href={shop.phoneHref} className="btn btn-line w-full">
-                <PhoneIcon width={16} height={16} />
+              <a href={shop.phoneHref} className="mt-4 flex items-center justify-center gap-3 text-[14px] text-muted transition-colors hover:text-ink">
+                <PhoneIcon width={15} height={15} />
                 {t.product.call}
+                <span className="num font-medium text-ink">{shop.phone}</span>
               </a>
             </div>
 
@@ -175,6 +189,21 @@ export function ProductView({ product }: { product: Product }) {
             )}
           </div>
         </div>
+      </div>
+
+      <div
+        className={`mobile-buy fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-between gap-4 border-t border-line bg-bg/95 px-4 backdrop-blur transition-transform duration-300 lg:hidden ${
+          showBar ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        aria-hidden={!showBar}
+        inert={!showBar}
+      >
+        <span className="price text-[16px] font-medium">{formatPrice(product.price, locale)}</span>
+        <a href={telegram} target="_blank" rel="noreferrer" className="btn btn-ink !h-10 !px-5 text-[11px]">
+          <TelegramIcon width={14} height={14} />
+          {t.product.order}
+        </a>
       </div>
 
       <section className="container-x wrap pb-24 pt-24 md:pb-32 md:pt-32">

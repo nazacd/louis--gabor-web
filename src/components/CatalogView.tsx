@@ -3,12 +3,15 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getDict, href } from "@/i18n/config";
-import { colors, products, types, type ColorKey, type TypeKey } from "@/data/catalog";
+import { colors, hasStudio, products, types, type ColorKey, type Product, type TypeKey } from "@/data/catalog";
 import { useUI } from "./Providers";
 import { Tile } from "./ProductCard";
 import { Reveal } from "./Reveal";
 
 type Sort = "new" | "cheap" | "expensive";
+
+// студийные пары первыми, потом ролики, потом фото с телефона — чтобы сетка не выглядела пёстрой
+const tier = (p: Product) => (hasStudio(p) ? 0 : p.film ? 1 : 2);
 const SORTS: Sort[] = ["new", "cheap", "expensive"];
 
 export function CatalogView() {
@@ -33,7 +36,7 @@ export function CatalogView() {
     const sorted = [...filtered];
     if (sort === "cheap") sorted.sort((a, b) => a.price - b.price || b.post - a.post);
     else if (sort === "expensive") sorted.sort((a, b) => b.price - a.price || b.post - a.post);
-    else sorted.sort((a, b) => b.post - a.post);
+    else sorted.sort((a, b) => tier(a) - tier(b) || b.post - a.post);
     return sorted;
   }, [type, color, sort]);
 
@@ -50,8 +53,8 @@ export function CatalogView() {
         </div>
 
         {/* строка 1: разделы */}
-        <div className="no-scrollbar -mx-[var(--gutter)] mt-8 overflow-x-auto border-b border-line px-[var(--gutter)]">
-          <div className="flex gap-8 whitespace-nowrap">
+        <div className="no-scrollbar -mx-[var(--gutter)] mt-8 overflow-x-auto border-b border-line px-[var(--gutter)] [mask-image:linear-gradient(90deg,#000_82%,transparent)] md:[mask-image:none]">
+          <div className="flex w-max gap-8 whitespace-nowrap pr-[var(--gutter)]">
             <button type="button" className="tab" aria-pressed={!type} onClick={() => setType(null)}>
               {t.catalog.all}
             </button>
@@ -66,7 +69,8 @@ export function CatalogView() {
         {/* строка 2: цвет слева, сортировка справа */}
         <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex shrink-0 gap-0.5 sm:gap-1">
+            <span className="label text-muted sm:hidden">{t.catalog.color}</span>
+            <div className="-ml-[6px] flex shrink-0 gap-0.5 sm:gap-1">
               {colorOptions.map((c) => (
                 <button
                   key={c}

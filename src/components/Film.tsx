@@ -75,9 +75,9 @@ export function Film({
       />
       {glyph && (
         <span
-          className={`pointer-events-none absolute bottom-3 left-3 text-white drop-shadow transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-90"}`}
+          className={`pointer-events-none absolute bottom-3 left-3 inline-flex h-6 w-6 items-center justify-center bg-[rgba(22,18,15,0.55)] text-white transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-100"}`}
         >
-          <PlayIcon width={14} height={14} />
+          <PlayIcon width={10} height={10} />
         </span>
       )}
     </div>

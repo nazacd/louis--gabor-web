@@ -14,10 +14,10 @@ export function FavoritesView() {
 
   if (list.length === 0) {
     return (
-      <div className="page flex flex-col items-center justify-center px-6 pb-28 pt-20 text-center md:pt-32">
+      <div className="page flex min-h-[calc(100svh-var(--top-offset)-120px)] flex-col items-center justify-center px-6 py-20 text-center">
         <Monogram className="w-[34px] text-faint" />
-        <h1 className="title mt-8 text-[30px] md:text-[36px]">{t.favorites.empty}</h1>
-        <p className="mt-4 max-w-[360px] text-[14px] leading-relaxed text-muted">{t.favorites.emptyText}</p>
+        <h1 className="title mt-8 max-w-[18ch] text-[30px] [text-wrap:balance] md:text-[36px]">{t.favorites.empty}</h1>
+        <p className="mt-4 max-w-[36ch] text-[14px] leading-relaxed text-muted [text-wrap:balance]">{t.favorites.emptyText}</p>
         <Link href={href(locale, "/catalog/")} className="btn btn-ink mt-9">
           {t.favorites.toCatalog}
         </Link>

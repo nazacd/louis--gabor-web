@@ -63,8 +63,8 @@ export function HeroStage() {
 
       <div className="container-x wrap relative grid min-h-[100svh] grid-rows-[minmax(0,1fr)_auto] lg:h-[100svh] lg:min-h-[680px] pb-8 pt-[var(--top-offset)] md:pb-12">
         {/* пара */}
-        <div className="relative flex items-center justify-center lg:justify-end">
-          <div className="relative w-full max-w-[1100px] lg:w-[min(64vw,calc((max(100svh,680px)-var(--top-offset)-280px)*1.333))]">
+        <div className="relative flex items-center justify-center lg:-mb-12 lg:items-end lg:justify-end">
+          <div className="relative w-full max-w-[1240px] lg:mr-[4vw] lg:w-[min(70vw,calc((max(100svh,680px)-var(--top-offset)-220px)*1.333))]">
             {HERO.map((p, i) =>
               visited.includes(i) ? (
                 <div
@@ -78,7 +78,7 @@ export function HeroStage() {
                     active={i === model ? active : (picked[p.sku] ?? p.studio[0].color)}
                     className="aspect-[4/3]"
                     stage={false}
-                    sizes="(min-width: 1024px) 64vw, 100vw"
+                    sizes="(min-width: 1024px) 70vw, 100vw"
                     priority={i === 0}
                     preload={i === model}
                   />
@@ -89,7 +89,7 @@ export function HeroStage() {
         </div>
 
         {/* подпись и управление */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <div className="label fade-in text-muted">{t.hero.kicker}</div>
             <h1 key={product.sku} className="display mt-4 text-[clamp(56px,7.5vw,128px)]">
@@ -100,13 +100,15 @@ export function HeroStage() {
             <div key={`${product.sku}-meta`} className="fade-in mt-5 flex flex-wrap items-center gap-x-6 gap-y-3" style={{ ["--delay" as string]: "200ms" }}>
               <span className="label num text-muted">{product.sku}</span>
               <span className="price">{formatPrice(product.price, locale)}</span>
-              <Link href={href(locale, productPath(product))} className="link">
-                {colors[active].name[locale]}
+            </div>
+            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+              <Link href={href(locale, productPath(product))} className="btn btn-ink">
+                {t.hero.view}
+              </Link>
+              <Link href={href(locale, "/catalog/")} className="link">
+                {t.home.viewAll}
               </Link>
             </div>
-            <Link href={href(locale, "/catalog/")} className="btn btn-ink mt-8">
-              {t.hero.cta}
-            </Link>
           </div>
 
           <div className="lg:min-w-[340px]" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -136,8 +138,8 @@ export function HeroStage() {
               </div>
               <span className="text-[13px] text-muted">{colors[active].name[locale]}</span>
             </div>
-            <div className="mt-4 h-px w-full bg-line">
-              {running && <div key={step} className="progress-line h-px bg-accent" style={{ animationDuration: `${STEP}ms` }} />}
+            <div className="relative mt-4 h-px w-full bg-line">
+              {running && <div key={step} className="progress-line absolute inset-x-0 -top-px h-[2px] bg-accent" style={{ animationDuration: `${STEP}ms` }} />}
             </div>
           </div>
         </div>

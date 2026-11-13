@@ -22,6 +22,7 @@ export const uz: typeof ru = {
   hero: {
     kicker: "Erkaklar poyabzali · Toshkent",
     cta: "Katalog",
+    view: "Modelni ko‘rish",
     pause: "Pauza",
     play: "Davom ettirish",
   },
@@ -61,6 +62,7 @@ export const uz: typeof ru = {
     otherColors: "Shuningdek",
     size: "O‘lcham",
     chooseSize: "O‘lcham",
+    sizeHint: "Tanlangan o‘lcham xabarga qo‘shiladi — mavjudligini yozishmada aniqlashtiramiz.",
     order: "Telegram’da yozish",
     call: "Qo‘ng‘iroq qilish",
     payment: "To‘lov",

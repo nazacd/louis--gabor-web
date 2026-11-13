@@ -52,7 +52,7 @@ function MenuDrawer() {
           {site.stores.map((s) => (
             <p key={s.id}>{s.name}</p>
           ))}
-          <a href={shop.phoneHref} className="num block pt-3 font-serif text-[22px] text-ink">
+          <a href={shop.phoneHref} className="num block pt-3 text-[20px] font-medium tracking-tight text-ink">
             {shop.phone}
           </a>
         </div>

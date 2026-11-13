@@ -4,7 +4,7 @@ import { getDict, isLocale } from "@/i18n/config";
 import { site } from "@/data/site";
 import { shop, paymentMethods } from "@/data/catalog";
 import { Film } from "@/components/Film";
-import { ArrowRight, PhoneIcon, TelegramIcon } from "@/components/Icons";
+import { ArrowRight } from "@/components/Icons";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/stores">): Promise<Metadata> {
   const { lang } = await params;
@@ -50,7 +50,7 @@ export default async function StoresPage({ params }: PageProps<"/[lang]/stores">
             <div className="flex items-baseline justify-between gap-6 border-b border-line py-4">
               <dt className="text-muted">{t.stores.phone}</dt>
               <dd>
-                <a href={shop.phoneHref} className="num font-serif text-[22px]">
+                <a href={shop.phoneHref} className="num text-[20px] font-medium tracking-tight">
                   {shop.phone}
                 </a>
               </dd>
@@ -71,17 +71,6 @@ export default async function StoresPage({ params }: PageProps<"/[lang]/stores">
               <dd className="text-right">{paymentMethods(lang).join(" · ")}</dd>
             </div>
           </dl>
-
-          <div className="mt-10 flex flex-wrap gap-2">
-            <a href={site.telegram} target="_blank" rel="noreferrer" className="btn btn-ink">
-              <TelegramIcon width={16} height={16} />
-              {t.stores.telegram}
-            </a>
-            <a href={shop.phoneHref} className="btn btn-line">
-              <PhoneIcon width={16} height={16} />
-              {t.product.call}
-            </a>
-          </div>
         </div>
         <div className="lg:col-span-4 lg:col-start-9">
           <Film name="stand" autoplay glyph={false} className="mx-auto aspect-[9/16] max-w-[400px]" />

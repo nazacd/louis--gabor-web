@@ -121,8 +121,10 @@ export function ColorSquares({
   return (
     <div className="flex items-center gap-0.5">
       {product.colors.map((c) => {
-        const square = <span className="chip-color" style={{ background: colors[c].hex, width: big ? 16 : 10, height: big ? 16 : 10 }} />;
-        if (onChange && photographed.has(c)) {
+        const live = Boolean(onChange && photographed.has(c));
+        const px = big ? 16 : live ? 12 : 8;
+        const square = <span className="chip-color" style={{ background: colors[c].hex, width: px, height: px }} />;
+        if (live && onChange) {
           return (
             <button
               key={c}
@@ -142,7 +144,7 @@ export function ColorSquares({
           );
         }
         return (
-          <span key={c} title={colors[c].name[locale]} className="inline-flex h-[26px] w-[26px] items-center justify-center">
+          <span key={c} title={colors[c].name[locale]} className="inline-flex h-[20px] w-[14px] items-center justify-center">
             {square}
           </span>
         );

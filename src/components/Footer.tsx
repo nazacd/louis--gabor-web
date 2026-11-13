@@ -39,7 +39,7 @@ export function Footer({ locale }: { locale: Locale }) {
               </li>
             ))}
             <li className="pt-3">
-              <a href={shop.phoneHref} className="num font-serif text-[22px] text-cream">
+              <a href={shop.phoneHref} className="num text-[20px] font-medium tracking-tight text-cream">
                 {shop.phone}
               </a>
             </li>
