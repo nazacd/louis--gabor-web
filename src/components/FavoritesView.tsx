@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { getDict, href } from "@/i18n/config";
 import { products } from "@/data/catalog";
-import { MiniCard } from "./ProductCard";
+import { Tile } from "./ProductCard";
 import { useUI } from "./Providers";
-import { BookmarkIcon } from "./Icons";
+import { Monogram } from "./Logo";
 
 export function FavoritesView() {
   const { locale, favorites } = useUI();
@@ -14,11 +14,11 @@ export function FavoritesView() {
 
   if (list.length === 0) {
     return (
-      <div className="page flex flex-col items-center justify-center px-6 pb-24 pt-20 text-center md:pt-28">
-        <BookmarkIcon width={26} height={26} />
-        <h1 className="mt-6 text-[20px] font-medium md:text-[22px]">{t.favorites.empty}</h1>
-        <p className="mt-3 max-w-[340px] text-[14px] leading-relaxed text-muted">{t.favorites.emptyText}</p>
-        <Link href={href(locale, "/catalog/")} className="btn btn-ink mt-7">
+      <div className="page flex flex-col items-center justify-center px-6 pb-28 pt-20 text-center md:pt-32">
+        <Monogram className="w-[34px] text-faint" />
+        <h1 className="title mt-8 text-[30px] md:text-[36px]">{t.favorites.empty}</h1>
+        <p className="mt-4 max-w-[360px] text-[14px] leading-relaxed text-muted">{t.favorites.emptyText}</p>
+        <Link href={href(locale, "/catalog/")} className="btn btn-ink mt-9">
           {t.favorites.toCatalog}
         </Link>
       </div>
@@ -27,14 +27,14 @@ export function FavoritesView() {
 
   return (
     <div className="page">
-      <div className="container-x pb-24 pt-10 md:pb-32 md:pt-16">
-        <div className="flex items-baseline gap-3">
-          <h1 className="display text-[48px] md:text-[72px]">{t.favorites.title}</h1>
-          <span className="text-[14px] text-muted">{list.length}</span>
+      <div className="container-x wrap pb-24 pt-8 md:pb-32 md:pt-14">
+        <div className="flex items-baseline gap-4 border-b border-line pb-6">
+          <h1 className="display text-[44px] md:text-[56px]">{t.favorites.title}</h1>
+          <span className="label num text-muted">{list.length}</span>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4">
+        <div className="mt-10 grid gap-x-3 gap-y-12 sm:gap-x-6 sm:gap-y-14" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 40vw), 1fr))" }}>
           {list.map((p) => (
-            <MiniCard key={p.sku} product={p} />
+            <Tile key={p.sku} product={p} />
           ))}
         </div>
       </div>

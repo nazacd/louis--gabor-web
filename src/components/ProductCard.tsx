@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { getDict, href } from "@/i18n/config";
-import { colors, productPath, sizeRange, type Product } from "@/data/catalog";
+import { productPath, sizeRange, type Product } from "@/data/catalog";
 import { formatPrice, media } from "@/lib/asset";
 import { useUI } from "./Providers";
-import { PairStage, Swatches, useColor } from "./PairStage";
+import { ColorSquares, PairStage, useColor } from "./PairStage";
 import { Film } from "./Film";
 import { BookmarkIcon } from "./Icons";
 
-function FavButton({ product, dark = false }: { product: Product; dark?: boolean }) {
+export function FavButton({ product, className = "" }: { product: Product; className?: string }) {
   const { locale, isFavorite, toggleFavorite } = useUI();
   const t = getDict(locale).product;
   const fav = isFavorite(product.sku);
@@ -18,101 +18,55 @@ function FavButton({ product, dark = false }: { product: Product; dark?: boolean
       type="button"
       aria-label={fav ? t.favRemove : t.favAdd}
       aria-pressed={fav}
-      onClick={() => toggleFavorite(product.sku)}
-      className={`absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
-        fav ? "bg-blue text-white" : dark ? "bg-white/90 text-ink hover:bg-white" : "bg-white/80 text-ink hover:bg-white"
-      }`}
+      onClick={(e) => {
+        e.preventDefault();
+        toggleFavorite(product.sku);
+      }}
+      className={`icon-btn ${className}`}
     >
-      <BookmarkIcon width={16} height={16} filled={fav} />
+      <BookmarkIcon width={18} height={18} filled={fav} />
     </button>
   );
 }
 
-function Meta({ product, tone = "light" }: { product: Product; tone?: "light" | "dark" }) {
-  const { locale } = useUI();
-  const muted = tone === "dark" ? "text-white/55" : "text-muted";
-  return (
-    <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-      <div className="min-w-0">
-        <h3 className={`text-[15px] font-medium leading-snug ${tone === "dark" ? "text-white" : ""}`}>{product.name[locale]}</h3>
-        <div className={`sku mt-0.5 text-[12px] ${muted}`}>
-          {product.sku} · {sizeRange(product)}
-        </div>
-      </div>
-      <div className={`text-[14px] font-medium sm:shrink-0 ${tone === "dark" ? "text-white" : ""}`}>{formatPrice(product.price, locale)}</div>
-    </div>
-  );
-}
-
-/** Студийная карточка: пара на сцене, цвет переключается мини-вырезками. */
-export function StudioCard({ product }: { product: Product }) {
+/**
+ * Единая карточка модели: рамка 4:5. Если есть студийный кадр — пара на сцене с переключением цвета,
+ * иначе — ролик (или фото в руке) в той же рамке.
+ */
+export function Tile({ product, tone = "light", sizes = "(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw" }: { product: Product; tone?: "light" | "dark"; sizes?: string }) {
   const { locale } = useUI();
   const [active, setActive] = useColor(product);
   const link = href(locale, productPath(product));
-  return (
-    <article className="group relative">
-      <Link href={link} className="lift block" aria-label={`${product.name[locale]} ${product.sku}`}>
-        <PairStage product={product} active={active} sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" />
-      </Link>
-      <FavButton product={product} />
-      <div className="mt-3">
-        <Swatches product={product} active={active} onChange={setActive} size="w-[58px]" />
-      </div>
-      <Link href={link} className="block">
-        <Meta product={product} />
-      </Link>
-    </article>
-  );
-}
-
-/** Карточка «в движении»: вертикальный ролик или фото в руке, если оно есть. */
-export function FilmCard({ product, tone = "light" }: { product: Product; tone?: "light" | "dark" }) {
-  const { locale } = useUI();
-  const link = href(locale, productPath(product));
   const cover = product.cover[0];
+  const dark = tone === "dark";
+
   return (
-    <article className="group relative">
+    <article className="@container group relative min-w-0">
       <Link href={link} className="block" aria-label={`${product.name[locale]} ${product.sku}`}>
-        {product.film ? (
-          <Film name={product.film} poster={cover ? media.cover(cover.image).small : undefined} label={product.name[locale]} />
+        {product.studio.length > 0 ? (
+          <PairStage product={product} active={active} className="aspect-[4/5]" zoom={1.12} sizes={sizes} />
+        ) : product.film ? (
+          <Film name={product.film} poster={cover ? media.cover(cover.image).small : undefined} className="aspect-[4/5]" label={product.name[locale]} />
         ) : cover ? (
-          <div className="film">
+          <div className="film aspect-[4/5]">
             <img src={media.cover(cover.image).small} alt={product.name[locale]} loading="lazy" />
           </div>
         ) : null}
       </Link>
-      <FavButton product={product} dark />
-      <Link href={link} className="block">
-        <Meta product={product} tone={tone} />
-        <div className={`mt-1.5 flex gap-1.5 ${tone === "dark" ? "text-white/55" : "text-muted"}`}>
-          {product.colors.map((c) => (
-            <span key={c} className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10" style={{ background: colors[c].hex }} title={colors[c].name[locale]} />
-          ))}
-        </div>
-      </Link>
+      <FavButton product={product} className={`absolute right-2 top-2 ${dark || product.studio.length === 0 ? "text-white" : ""}`} />
+
+      <div className="mt-4 flex flex-col gap-1 @[300px]:flex-row @[300px]:items-baseline @[300px]:justify-between @[300px]:gap-4">
+        <Link href={link} className={`font-serif text-[16px] sm:text-[18px] leading-tight transition-colors ${dark ? "text-cream hover:text-white" : "hover:text-accent"}`}>
+          {product.name[locale]}
+        </Link>
+        <span className={`price shrink-0 ${dark ? "text-cream" : ""}`}>{formatPrice(product.price, locale)}</span>
+      </div>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <span className={`label num ${dark ? "text-cream/55" : "text-muted"}`}>
+          {product.sku} · {sizeRange(product)}
+        </span>
+        <ColorSquares product={product} active={active} onChange={product.studio.length > 1 ? setActive : undefined} />
+      </div>
     </article>
   );
 }
-
-/** Компактная карточка для поиска и избранного — любой тип модели. */
-export function MiniCard({ product, onClick }: { product: Product; onClick?: () => void }) {
-  const { locale } = useUI();
-  const s = product.studio[0];
-  const c = product.cover[0];
-  return (
-    <Link href={href(locale, productPath(product))} onClick={onClick} className="group block">
-      <div className="stage aspect-[4/3]">
-        {s ? (
-          <img src={media.studio(s.image).small} alt={product.name[locale]} className="stage-img" loading="lazy" />
-        ) : c ? (
-          <img src={media.cover(c.image).small} alt={product.name[locale]} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-        ) : product.film ? (
-          <img src={media.film(product.film).poster} alt={product.name[locale]} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-        ) : null}
-      </div>
-      <Meta product={product} />
-    </Link>
-  );
-}
-
-export { FavButton };

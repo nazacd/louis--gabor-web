@@ -14,7 +14,7 @@ function playOnly(v: HTMLVideoElement) {
 }
 
 /**
- * Вертикальный ролик: до запуска показывает постер. На компьютере играет при наведении,
+ * Ролик без звука. До запуска — постер. На компьютере играет при наведении (или сам, если autoplay),
  * на телефоне — когда карточка в центре экрана. Видео грузится только при первом запуске.
  */
 export function Film({
@@ -23,14 +23,14 @@ export function Film({
   className = "",
   autoplay = false,
   label,
+  glyph = true,
 }: {
   name: string;
-  /** Своя обложка вместо кадра из ролика */
   poster?: string;
   className?: string;
-  /** Играть, как только ролик виден (для крупного ролика на странице) */
   autoplay?: boolean;
   label?: string;
+  glyph?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ export function Film({
       onMouseEnter={() => ref.current && playOnly(ref.current)}
       onMouseLeave={() => !autoplay && ref.current?.pause()}
     >
-      <img src={poster ?? f.poster} alt={label ?? ""} loading="lazy" />
+      <img src={poster ?? f.poster} alt={label ?? ""} loading="lazy" draggable={false} />
       <video
         ref={ref}
         src={f.src}
@@ -73,8 +73,10 @@ export function Film({
         onPlaying={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
       />
-      {!playing && (
-        <span className="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-ink">
+      {glyph && (
+        <span
+          className={`pointer-events-none absolute bottom-3 left-3 text-white drop-shadow transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-90"}`}
+        >
           <PlayIcon width={14} height={14} />
         </span>
       )}

@@ -3,8 +3,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const mono = readFileSync(new URL("../src/brand/monogram.svg", import.meta.url), "utf8")
-  .replace("currentColor", "#ffffff")
-  .replace("<svg ", '<svg width="30" ');
+  .replace("currentColor", "#16120f")
+  .replace("<svg ", '<svg width="40" ');
 
 const html = `<!doctype html>
 <html lang="ru">
@@ -14,21 +14,20 @@ const html = `<!doctype html>
 <title>404 — Louis Gabor</title>
 <link rel="icon" href="${base}/icon.svg" />
 <style>
-  body { margin: 0; min-height: 100svh; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg,#ecedef,#d5d8dc); color: #101318;
-    font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
-  .tile { width: 56px; height: 56px; background: #005d9b; display: inline-flex; align-items: center; justify-content: center; }
-  .word { margin-top: 14px; font-size: 13px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; }
-  .code { margin-top: 48px; font-size: 11px; font-weight: 600; letter-spacing: .18em; color: #6a707a; }
-  h1 { margin: 12px 0 0; font-weight: 300; font-size: 40px; letter-spacing: -.03em; }
-  p { margin: 6px 0 0; color: #6a707a; font-size: 15px; }
-  .links { margin-top: 32px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  a.btn { display: inline-block; padding: 15px 26px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; }
-  .ink { background: #101318; color: #fff; } .line { background: #fff; color: #101318; border: 1px solid #dcdee2; }
+  body { margin: 0; min-height: 100svh; display: flex; align-items: center; justify-content: center; background: #ece8e1; color: #16120f;
+    font-family: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
+  .word { margin-top: 18px; font-family: "Prata", Georgia, "Times New Roman", serif; font-size: 22px; }
+  .code { margin-top: 56px; font-size: 11px; font-weight: 500; letter-spacing: .2em; color: #7a7168; }
+  h1 { margin: 14px 0 0; font-family: "Prata", Georgia, "Times New Roman", serif; font-weight: 400; font-size: 40px; letter-spacing: -.01em; }
+  p { margin: 8px 0 0; color: #7a7168; font-size: 15px; }
+  .links { margin-top: 36px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  a.btn { display: inline-block; padding: 16px 28px; font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
+  .ink { background: #16120f; color: #e9e3d8; } .line { color: #16120f; border: 1px solid #16120f; }
 </style>
 </head>
 <body>
   <main>
-    <a href="${base}/ru/" aria-label="Louis Gabor" style="text-decoration:none;color:inherit"><span class="tile">${mono}</span><div class="word">Louis Gabor</div></a>
+    <a href="${base}/ru/" aria-label="Louis Gabor" style="text-decoration:none;color:inherit">${mono}<div class="word">Louis Gabor</div></a>
     <div class="code">404</div>
     <h1>Страница не найдена</h1>
     <p>Sahifa topilmadi</p>

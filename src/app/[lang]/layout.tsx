@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import "@fontsource-variable/manrope";
+import "@fontsource/prata/400.css";
+import "@fontsource-variable/inter-tight";
 import "../globals.css";
 import { getDict, isLocale, locales } from "@/i18n/config";
 import { asset } from "@/lib/asset";
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 }
 
 export const viewport: Viewport = {
-  themeColor: "#ecedef",
+  themeColor: "#ece8e1",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

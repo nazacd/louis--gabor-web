@@ -4,7 +4,7 @@ import { getDict, isLocale } from "@/i18n/config";
 import { site } from "@/data/site";
 import { shop, paymentMethods } from "@/data/catalog";
 import { Film } from "@/components/Film";
-import { ArrowRight, PhoneIcon } from "@/components/Icons";
+import { ArrowRight, PhoneIcon, TelegramIcon } from "@/components/Icons";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/stores">): Promise<Metadata> {
   const { lang } = await params;
@@ -18,53 +18,73 @@ export default async function StoresPage({ params }: PageProps<"/[lang]/stores">
 
   return (
     <div className="page">
-      <div className="container-x grid gap-12 pb-24 pt-10 md:pb-32 md:pt-16 lg:grid-cols-12">
+      <div className="container-x wrap grid gap-14 pb-24 pt-8 md:pb-32 md:pt-14 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-7">
-          <h1 className="display text-[56px] md:text-[96px]">{t.stores.title}</h1>
-          <p className="mt-5 max-w-[460px] text-[15px] leading-relaxed text-muted">{t.stores.text}</p>
+          <div className="label text-muted">{t.stores.city}</div>
+          <h1 className="display mt-4 text-[56px] md:text-[88px]">{t.stores.title}</h1>
 
-          <ul className="mt-10 divide-y divide-line border-y border-line">
+          <ul className="mt-12 border-t border-ink">
             {site.stores.map((s, i) => (
-              <li key={s.id} className="grid grid-cols-[48px_1fr] gap-4 py-7 md:grid-cols-[64px_1fr_auto] md:items-center">
-                <span className="sku text-[14px] text-faint">0{i + 1}</span>
-                <div>
-                  <div className="text-[26px] font-medium tracking-tight md:text-[32px]">{s.name}</div>
-                  <div className="text-[14px] text-muted">{s.city[lang]}</div>
-                </div>
-                <a href={s.map} target="_blank" rel="noreferrer" className="btn btn-line col-start-2 justify-self-start md:col-start-auto">
-                  {t.stores.route}
-                  <ArrowRight width={22} height={12} />
+              <li key={s.id} className="border-b border-line">
+                <a
+                  href={s.map}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group grid grid-cols-[40px_1fr_auto] items-baseline gap-4 py-7 md:grid-cols-[64px_1fr_auto] md:py-9"
+                >
+                  <span className="num label text-faint">0{i + 1}</span>
+                  <span>
+                    <span className="title block text-[30px] transition-colors group-hover:text-accent md:text-[40px]">{s.name}</span>
+                    <span className="mt-1 block text-[14px] text-muted">{s.city[lang]}</span>
+                  </span>
+                  <span className="label flex items-center gap-3 text-muted transition-colors group-hover:text-ink">
+                    <span className="hidden sm:inline">{t.stores.route}</span>
+                    <ArrowRight width={22} height={12} />
+                  </span>
                 </a>
               </li>
             ))}
           </ul>
 
-          <div className="mt-10 flex flex-wrap gap-2">
-            <a href={shop.phoneHref} className="btn btn-ink">
-              <PhoneIcon width={17} height={17} />
-              {shop.phone}
-            </a>
-            <a href={site.telegram} target="_blank" rel="noreferrer" className="btn btn-blue">
-              {t.product.askTelegram}
-            </a>
-            <a href={site.telegramChannel} target="_blank" rel="noreferrer" className="btn btn-line">
-              {t.stores.channel}
-            </a>
-          </div>
+          <dl className="mt-12 text-[14px]">
+            <div className="flex items-baseline justify-between gap-6 border-b border-line py-4">
+              <dt className="text-muted">{t.stores.phone}</dt>
+              <dd>
+                <a href={shop.phoneHref} className="num font-serif text-[22px]">
+                  {shop.phone}
+                </a>
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-6 border-b border-line py-4">
+              <dt className="text-muted">Telegram</dt>
+              <dd className="flex flex-wrap justify-end gap-x-6 gap-y-1">
+                <a href={site.telegram} target="_blank" rel="noreferrer" className="link">
+                  {t.stores.telegram}
+                </a>
+                <a href={site.telegramChannel} target="_blank" rel="noreferrer" className="link">
+                  {t.stores.channel}
+                </a>
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-6 border-b border-line py-4">
+              <dt className="shrink-0 text-muted">{t.home.payment}</dt>
+              <dd className="text-right">{paymentMethods(lang).join(" · ")}</dd>
+            </div>
+          </dl>
 
-          <div className="mt-12">
-            <div className="label text-muted">{t.home.payTitle}</div>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {paymentMethods(lang).map((m) => (
-                <li key={m} className="chip pointer-events-none">
-                  {m}
-                </li>
-              ))}
-            </ul>
+          <div className="mt-10 flex flex-wrap gap-2">
+            <a href={site.telegram} target="_blank" rel="noreferrer" className="btn btn-ink">
+              <TelegramIcon width={16} height={16} />
+              {t.stores.telegram}
+            </a>
+            <a href={shop.phoneHref} className="btn btn-line">
+              <PhoneIcon width={16} height={16} />
+              {t.product.call}
+            </a>
           </div>
         </div>
         <div className="lg:col-span-4 lg:col-start-9">
-          <Film name="stand" autoplay className="mx-auto max-w-[380px]" />
+          <Film name="stand" autoplay glyph={false} className="mx-auto aspect-[9/16] max-w-[400px]" />
         </div>
       </div>
     </div>
