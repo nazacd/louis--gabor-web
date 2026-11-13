@@ -96,6 +96,8 @@ EXTRA_CLIPS = {
 STAGE = (1600, 1200)
 PAIR_W = 0.78
 BASELINE = 0.8
+# тёплый тёмный тон тени под цвет фона сайта
+SHADOW_RGB = (38, 26, 18)
 
 
 def photo_path(number: str) -> Path:
@@ -145,34 +147,86 @@ def staged(cut: Image.Image) -> Image.Image:
     obj = obj.resize((round(obj.width * s), round(obj.height * s)), Image.LANCZOS)
     x = (W - obj.width) // 2
     y = round(H * BASELINE) - obj.height
+    obj = trim_sole_fringe(obj)
     oa = obj.getchannel("A")
 
-    # контактная тень вдоль нижнего контура подошвы
-    arr = np.array(oa)
-    hh, ww = arr.shape
-    filled = arr > 60
-    has = filled.any(axis=0)
-    bottom = np.where(has, hh - 1 - np.argmax(filled[::-1], axis=0), -1)
-    depth = max(6, round(obj.height * 0.05))
-    band = np.zeros((hh + depth * 3, ww), dtype=np.float32)
-    for xi in np.nonzero(has)[0]:
-        yb = bottom[xi]
-        band[yb : yb + depth, xi] = np.linspace(1.0, 0.0, depth)
-    contact = Image.new("L", STAGE, 0)
-    contact.paste(Image.fromarray((band * 255).astype("uint8")), (x, y))
-    contact = contact.filter(ImageFilter.GaussianBlur(5)).point(lambda v: int(v * 0.6))
-    # мягкая тень под всей парой
-    flat = oa.resize((round(obj.width * 0.98), max(8, obj.height // 5)))
-    soft = Image.new("L", STAGE, 0)
-    soft.paste(flat, (x + round(obj.width * 0.01), round(H * BASELINE) - round(flat.height * 0.85)))
-    soft = soft.filter(ImageFilter.GaussianBlur(26)).point(lambda v: int(v * 0.26))
+    shadow_alpha = floor_shadow(np.array(oa), x, y)
 
     canvas = Image.new("RGBA", STAGE, (0, 0, 0, 0))
-    shadow = Image.new("RGBA", STAGE, (14, 16, 22, 0))
-    shadow.putalpha(ImageChops.lighter(soft, contact))
+    shadow = Image.new("RGBA", STAGE, SHADOW_RGB + (0,))
+    shadow.putalpha(Image.fromarray(shadow_alpha))
     canvas.alpha_composite(shadow)
     canvas.alpha_composite(obj, (x, y))
     return canvas
+
+
+def trim_sole_fringe(obj: Image.Image) -> Image.Image:
+    """Срезает полупрозрачную кромку под подошвой — остаток полки после вырезки.
+
+    Ниже последнего плотного пикселя в каждой колонке альфа обнуляется,
+    сам край сглаживается на пиксель, чтобы не было лесенки.
+    """
+    from scipy import ndimage
+
+    a = np.array(obj.getchannel("A")).astype(np.float32)
+    hh, ww = a.shape
+    solid = a > 200
+    has = solid.any(axis=0)
+    bottom = np.where(has, hh - 1 - np.argmax(solid[::-1], axis=0), hh)
+    bottom = np.where(has, ndimage.minimum_filter1d(bottom, 3), hh)
+    rows = np.arange(hh)[:, None]
+    cut = np.where(rows > bottom[None, :], 0, a)
+    soft = ndimage.gaussian_filter(cut, 0.7)
+    near = np.abs(rows - bottom[None, :]) <= 2
+    out = np.where(near, np.minimum(soft, a), cut)
+    obj = obj.copy()
+    obj.putalpha(Image.fromarray(np.clip(out, 0, 255).astype("uint8")))
+    return obj
+
+
+def floor_shadow(alpha: np.ndarray, x: int, y: int) -> np.ndarray:
+    """Тень на полу, которая повторяет нижний контур каждой подошвы.
+
+    Три слоя, как у реальной пары под рассеянным светом:
+    плотная линия контакта, короткое затемнение у подошвы и широкая мягкая полутень.
+    Там, где подошва поднимается (носок, каблук), контакт слабеет.
+    """
+    from scipy import ndimage
+
+    W, H = STAGE
+    hh, ww = alpha.shape
+    filled = alpha > 60
+    has = filled.any(axis=0)
+    bottom = np.where(has, hh - 1 - np.argmax(filled[::-1], axis=0), 0).astype(np.float32)
+    # зубчатый край маски даёт полосы — сглаживаем контур
+    bottom = np.where(has, ndimage.median_filter(bottom, 9), 0)
+    # линия пола рядом с колонкой: самая нижняя точка подошвы в окрестности
+    window = max(9, round(ww * 0.06))
+    floor = ndimage.maximum_filter1d(np.where(has, bottom, 0), window)
+    lift = np.clip(floor - bottom, 0, None)
+    touch = np.exp(-lift / (hh * 0.012)) * has  # 1 — подошва на полу, 0 — приподнята
+
+    ys = np.arange(H, dtype=np.float32)[:, None]
+    base = np.full(W, -1e6, dtype=np.float32)
+    weight = np.zeros(W, dtype=np.float32)
+    base[x : x + ww] = np.where(has, bottom + y, -1e6)
+    weight[x : x + ww] = touch
+    d = ys - base[None, :]  # >0 — ниже подошвы
+
+    def layer(above: float, below: float, blur: tuple[float, float], power: float, w: np.ndarray | None = None) -> np.ndarray:
+        v = np.where((d >= -above) & (d <= below), 1 - np.clip(d, 0, None) / max(below, 1), 0) ** power
+        if w is not None:
+            v = v * w[None, :]
+        # по горизонтали размываем сильнее: тень лежит на полу, а не висит под подошвой
+        return ndimage.gaussian_filter(v.astype(np.float32), blur)
+
+    objh = hh
+    contact = layer(4, objh * 0.005, (1.2, 4), 1.0, weight)
+    near = layer(objh * 0.02, objh * 0.016, (3.5, 12), 1.8, 0.4 + 0.6 * weight)
+    wide = layer(objh * 0.1, objh * 0.045, (12, 36), 2.0)
+
+    a = 1 - (1 - 0.7 * contact) * (1 - 0.34 * near) * (1 - 0.14 * wide)
+    return (np.clip(a, 0, 1) * 255).astype("uint8")
 
 
 def details(cut: Image.Image, name: str, count: int = 2) -> None:
