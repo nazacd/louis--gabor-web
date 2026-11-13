@@ -4,3 +4,4 @@ out/
 .cache/
 *.tsbuildinfo
 next-env.d.ts
+.design/

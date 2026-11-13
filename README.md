@@ -1,4 +1,4 @@
-# louis--gabor-web
+# louis-gabor-web
 
 Сайт магазина мужской обуви **Louis Gabor** (Ташкент) — MVP для показа клиенту.
 Статический сайт на Next.js, без бэкенда и админки. Два языка: `/ru/` и `/uz/`.
@@ -65,5 +65,5 @@ npm run dev
 
 ## Публикация
 
-Каждый push в `main` публикует сайт на GitHub Pages: `https://<владелец>.github.io/louis--gabor-web/`.
+Каждый push в `main` публикует сайт на GitHub Pages: `https://<владелец>.github.io/louis-gabor-web/`.
 Один раз нужно включить: Settings → Pages → Source → «GitHub Actions».
