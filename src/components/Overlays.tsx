@@ -98,7 +98,15 @@ function CartDrawer() {
   const { locale, panel, close, cartIntent, isFavorite, toggleFavorite } = useUI();
   const t = getDict(locale);
   const product = cartIntent ? getProduct(cartIntent.productId.toLowerCase()) : undefined;
-  const image = product?.studio[0]?.image;
+  const thumb = product
+    ? product.studio[0]
+      ? { src: media.studio(product.studio[0].image).small, cut: true }
+      : product.cover[0]
+        ? { src: media.cover(product.cover[0].image).small, cut: false }
+        : product.film
+          ? { src: media.film(product.film).poster, cut: false }
+          : null
+    : null;
   return (
     <Drawer
       open={panel === "cart"}
@@ -120,7 +128,7 @@ function CartDrawer() {
         {product && cartIntent && (
           <div className="mb-8 flex gap-4 border-b border-line pb-8">
             <div className="stage h-[90px] w-[120px] shrink-0">
-              {image && <img src={media.studio(image).small} alt="" className="stage-img" />}
+              {thumb && <img src={thumb.src} alt="" className={thumb.cut ? "stage-img" : "absolute inset-0 h-full w-full object-cover"} />}
             </div>
             <div className="min-w-0 flex-1">
               <div className="label text-muted">{t.cart.chosen}</div>

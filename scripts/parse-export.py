@@ -3,7 +3,7 @@
 Запуск из корня репозитория:  python3 scripts/parse-export.py
 Результат: src/data/export.json — источник фактов для сайта. Руками этот файл не правится.
 
-Если один артикул публиковался несколько раз, берётся самый поздний пост.
+Если один артикул публиковался несколько раз, берётся самый поздний пост — кроме артикулов из PIN.
 """
 
 import html
@@ -14,6 +14,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT = ROOT / "source" / "telegram-export" / "messages.html"
 OUT = ROOT / "src" / "data" / "export.json"
+
+# Артикул -> пост, факты из которого берём вместо самого позднего.
+# 196: пост #2799 смешивает в альбоме два финиша (гладкие 196 и ворсовые 196-N), а #2791
+# («чёрный / тёмно-синий, 39–45») ровно совпадает с двумя гладкими фото. Уточнить у магазина.
+PIN = {"196": 2791}
 
 COLOR_KEYS = {
     "чёрный": "black",
@@ -66,7 +71,9 @@ def main() -> None:
     for p in posts:
         prev = by_sku.get(p["sku"])
         media = (prev["media"] if prev else []) + [m for m in p["media"] if not prev or m not in prev["media"]]
-        if prev is None or p["post"] > prev["post"]:
+        pinned = PIN.get(p["sku"])
+        newer = prev is None or (p["post"] == pinned if pinned else p["post"] > prev["post"])
+        if newer:
             by_sku[p["sku"]] = {**p, "media": media, "posts": (prev["posts"] if prev else []) + [p["post"]]}
         else:
             prev["media"] = media

@@ -162,37 +162,6 @@
       ]
     },
     {
-      "post": 2799,
-      "date": "2026-11-03",
-      "sku": "196",
-      "price": 1550000,
-      "sizes": [
-        38,
-        45
-      ],
-      "colors": [
-        "black",
-        "navy",
-        "brown"
-      ],
-      "sole": "XL Extralight",
-      "media": [
-        "video_files/IMG_2528.MP4",
-        "photos/photo_2171@03-11-2026_21-39-35.jpg",
-        "photos/photo_2172@03-11-2026_21-39-35.jpg",
-        "photos/photo_2173@03-11-2026_21-39-35.jpg",
-        "photos/photo_2174@03-11-2026_21-39-36.jpg",
-        "photos/photo_2175@03-11-2026_21-39-36.jpg",
-        "photos/photo_2176@03-11-2026_21-39-36.jpg",
-        "photos/photo_2177@03-11-2026_21-39-36.jpg",
-        "photos/photo_2178@03-11-2026_21-39-36.jpg"
-      ],
-      "posts": [
-        2791,
-        2799
-      ]
-    },
-    {
       "post": 2798,
       "date": "2026-11-02",
       "sku": "6297A28",
@@ -309,6 +278,36 @@
       "posts": [
         2761,
         2793
+      ]
+    },
+    {
+      "post": 2791,
+      "date": "2026-10-28",
+      "sku": "196",
+      "price": 1550000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2528.MP4",
+        "photos/photo_2171@03-11-2026_21-39-35.jpg",
+        "photos/photo_2172@03-11-2026_21-39-35.jpg",
+        "photos/photo_2173@03-11-2026_21-39-35.jpg",
+        "photos/photo_2174@03-11-2026_21-39-36.jpg",
+        "photos/photo_2175@03-11-2026_21-39-36.jpg",
+        "photos/photo_2176@03-11-2026_21-39-36.jpg",
+        "photos/photo_2177@03-11-2026_21-39-36.jpg",
+        "photos/photo_2178@03-11-2026_21-39-36.jpg"
+      ],
+      "posts": [
+        2791,
+        2799
       ]
     },
     {

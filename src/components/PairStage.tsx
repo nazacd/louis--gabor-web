@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { colors, type ColorKey, type Product } from "@/data/catalog";
 import { media } from "@/lib/asset";
 import { useUI } from "./Providers";
@@ -15,17 +15,33 @@ export function PairStage({
   sizes = "(min-width: 1024px) 50vw, 100vw",
   className = "aspect-[4/3]",
   priority = false,
+  preload = false,
 }: {
   product: Product;
   active: ColorKey;
   sizes?: string;
   className?: string;
   priority?: boolean;
+  /** Подгрузить остальные цвета, когда страница освободится */
+  preload?: boolean;
 }) {
   const { locale } = useUI();
-  // кадр другого цвета грузится только когда его впервые выбрали — дальше переключение мгновенное
+  // кадр другого цвета грузится только когда его впервые выбрали
   const [seen, setSeen] = useState<ColorKey[]>([active]);
   if (!seen.includes(active)) setSeen([...seen, active]);
+  // пока новый кадр грузится, на сцене остаётся прежний — пара не пропадает на медленной сети
+  const [loaded, setLoaded] = useState<ColorKey[]>([]);
+  const [shown, setShown] = useState<ColorKey>(active);
+  if (shown !== active && loaded.includes(active)) setShown(active);
+
+  useEffect(() => {
+    if (!preload) return;
+    const all = product.studio.map((s) => s.color);
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
+    const id = idle(() => setSeen((s) => [...new Set([...s, ...all])]));
+    return () => (window.cancelIdleCallback ?? window.clearTimeout)(id as number);
+  }, [preload, product]);
+
   return (
     <div className={`stage ${className}`}>
       {product.studio.filter(({ color }) => seen.includes(color)).map(({ color, image }, i) => {
@@ -39,7 +55,8 @@ export function PairStage({
             alt={color === active ? `${product.name[locale]} ${product.sku}, ${colors[color].name[locale]}` : ""}
             loading={priority && i === 0 ? "eager" : "lazy"}
             fetchPriority={priority && i === 0 ? "high" : "auto"}
-            className={`stage-img ${color === active ? "" : "is-hidden"}`}
+            onLoad={() => setLoaded((l) => (l.includes(color) ? l : [...l, color]))}
+            className={`stage-img ${color === shown ? "" : "is-hidden"}`}
           />
         );
       })}

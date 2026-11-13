@@ -38,7 +38,7 @@ export function HeroStage() {
           <div className="relative">
             {HERO.map((p, i) => visited.includes(i) && (
               <div key={p.sku} className={`transition-opacity duration-500 ${i === index ? "relative opacity-100" : "pointer-events-none absolute inset-0 opacity-0"}`}>
-                <PairStage product={p} active={color[p.sku]} className="aspect-[4/3] !bg-none" sizes="(min-width: 1024px) 66vw, 100vw" priority={i === 0} />
+                <PairStage product={p} active={color[p.sku]} className="aspect-[4/3] !bg-none" sizes="(min-width: 1024px) 66vw, 100vw" priority={i === 0} preload />
               </div>
             ))}
           </div>

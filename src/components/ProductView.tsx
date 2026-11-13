@@ -56,7 +56,7 @@ export function ProductView({ product }: { product: Product }) {
         <div className="lg:col-span-7">
           {studio ? (
             <>
-              <PairStage product={product} active={active} sizes="(min-width: 1024px) 58vw, 100vw" priority />
+              <PairStage product={product} active={active} sizes="(min-width: 1024px) 58vw, 100vw" priority preload />
               <div className="mt-3">
                 <Swatches product={product} active={active} onChange={setActive} size="w-[84px]" />
               </div>
