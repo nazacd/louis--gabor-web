@@ -118,6 +118,40 @@ def cutout(number: str) -> Image.Image:
     return Image.open(cached).convert("RGBA")
 
 
+def refine_sole(number: str, cut: Image.Image) -> Image.Image:
+    """Возвращает тёмные края подошвы, которые нейросеть срезала или размыла.
+
+    Подошвы почти чёрные, полка под ними светлая, поэтому в нижней части пары
+    маску можно уточнить по яркости исходного фото: тёмный пиксель рядом с обувью — это обувь.
+    """
+    from scipy import ndimage
+
+    photo = np.array(Image.open(photo_path(number)).convert("RGB")).astype(np.float32)
+    a = np.array(cut.getchannel("A")).astype(np.float32)
+    mask = a > 40
+    rows = np.nonzero(mask.any(axis=1))[0]
+    top, bottom = rows.min(), rows.max()
+    lum = photo @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    dark = np.clip((70 - lum) / 28, 0, 1)
+    near = ndimage.binary_dilation(mask, iterations=24)
+    band = np.zeros_like(mask)
+    band[top + int((bottom - top) * 0.62) :, :] = True
+    # тёмное пятно должно касаться обуви, а не быть отдельной тенью на полке;
+    # размыкание убирает тонкие выросты и точки фона по краю
+    cand = ndimage.binary_opening((dark > 0.5) & near & band, iterations=4)
+    labels, n = ndimage.label(cand | mask)
+    keep = np.isin(labels, np.unique(labels[mask]))
+    add = np.where(keep & (cand | mask) & band, dark * 255, 0)
+    add = ndimage.gaussian_filter(add, 0.8)
+    new_a = np.maximum(a, add)
+    rgb = np.array(cut.convert("RGB")).astype(np.float32)
+    raised = new_a > a + 8
+    rgb[raised] = photo[raised]
+    out = Image.fromarray(np.clip(rgb, 0, 255).astype("uint8")).convert("RGBA")
+    out.putalpha(Image.fromarray(np.clip(new_a, 0, 255).astype("uint8")))
+    return out
+
+
 def clean_alpha(cut: Image.Image) -> Image.Image:
     """Оставляет только крупные связные области маски и срезает полупрозрачную бахрому."""
     from scipy import ndimage
@@ -163,14 +197,18 @@ def staged(cut: Image.Image) -> Image.Image:
 def trim_sole_fringe(obj: Image.Image) -> Image.Image:
     """Срезает полупрозрачную кромку под подошвой — остаток полки после вырезки.
 
-    Ниже последнего плотного пикселя в каждой колонке альфа обнуляется,
+    Ниже последнего плотного (или тёмного) пикселя в каждой колонке альфа обнуляется,
     сам край сглаживается на пиксель, чтобы не было лесенки.
     """
     from scipy import ndimage
 
     a = np.array(obj.getchannel("A")).astype(np.float32)
     hh, ww = a.shape
-    solid = a > 200
+    # кромка от полки светлая; тёмная подошва и каблук после вырезки бывают полупрозрачными,
+    # их считаем частью обуви, иначе срезается угол каблука
+    rgb = np.array(obj.convert("RGB")).astype(np.float32)
+    lum = rgb @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    solid = (a > 200) | ((a > 50) & (lum < 70))
     has = solid.any(axis=0)
     bottom = np.where(has, hh - 1 - np.argmax(solid[::-1], axis=0), hh)
     bottom = np.where(has, ndimage.minimum_filter1d(bottom, 3), hh)
@@ -301,7 +339,7 @@ def main() -> None:
     for sub in ("studio", "swatch", "detail", "cover", "film"):
         (OUT / sub).mkdir(parents=True, exist_ok=True)
     for number, name in STUDIO.items():
-        cut = cutout(number)
+        cut = refine_sole(number, cutout(number))
         stage = staged(cut.copy())
         stage.save(OUT / "studio" / f"{name}.webp", quality=86, method=6)
         stage.resize((800, 600), Image.LANCZOS).save(OUT / "studio" / f"{name}-800.webp", quality=84, method=6)
