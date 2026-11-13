@@ -1,0 +1,498 @@
+{
+  "phone": "+998 97 181 07 07",
+  "malls": [
+    "Chimgan Mall",
+    "Riviera Mall"
+  ],
+  "payment": [
+    "Наличные",
+    "Uzcard",
+    "Humo",
+    "Uzum Nasiya",
+    "Alif Nasiya",
+    "Visa",
+    "Unionpay",
+    "Mastercard"
+  ],
+  "products": [
+    {
+      "post": 2812,
+      "date": "2026-11-11",
+      "sku": "273",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "photos/photo_2156@17-10-2026_21-05-01.jpg",
+        "photos/photo_2157@17-10-2026_21-05-01.jpg",
+        "photos/photo_2158@17-10-2026_21-05-01.jpg",
+        "photos/photo_2159@17-10-2026_21-05-01.jpg",
+        "photos/photo_2160@17-10-2026_21-05-01.jpg",
+        "video_files/IMG_2701.MP4"
+      ],
+      "posts": [
+        2772,
+        2812
+      ]
+    },
+    {
+      "post": 2811,
+      "date": "2026-11-10",
+      "sku": "8171",
+      "price": 1550000,
+      "sizes": [
+        38,
+        44
+      ],
+      "colors": [
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "photos/photo_2167@24-10-2026_20-39-46.jpg",
+        "photos/photo_2168@24-10-2026_20-39-46.jpg",
+        "video_files/IMG_2690.MP4"
+      ],
+      "posts": [
+        2786,
+        2811
+      ]
+    },
+    {
+      "post": 2810,
+      "date": "2026-11-08",
+      "sku": "Y08K10-1",
+      "price": 2150000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "video_files/IMG_2333.MP4",
+        "video_files/IMG_2684.MP4"
+      ],
+      "posts": [
+        2769,
+        2810
+      ]
+    },
+    {
+      "post": 2809,
+      "date": "2026-11-06",
+      "sku": "1577",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2628.MP4"
+      ],
+      "posts": [
+        2809
+      ]
+    },
+    {
+      "post": 2808,
+      "date": "2026-11-05",
+      "sku": "Y08K12-1",
+      "price": 2150000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "video_files/IMG_2546.MP4",
+        "video_files/IMG_2622.MP4"
+      ],
+      "posts": [
+        2792,
+        2808
+      ]
+    },
+    {
+      "post": 2807,
+      "date": "2026-11-04",
+      "sku": "1571",
+      "price": 1750000,
+      "sizes": [
+        38,
+        44
+      ],
+      "colors": [
+        "burgundy",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "photos/photo_2164@21-10-2026_19-49-09.jpg",
+        "photos/photo_2165@21-10-2026_19-49-09.jpg",
+        "photos/photo_2166@21-10-2026_19-49-09.jpg",
+        "video_files/IMG_2609.MP4"
+      ],
+      "posts": [
+        2782,
+        2807
+      ]
+    },
+    {
+      "post": 2799,
+      "date": "2026-11-03",
+      "sku": "196",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "video_files/IMG_2528.MP4",
+        "photos/photo_2171@03-11-2026_21-39-35.jpg",
+        "photos/photo_2172@03-11-2026_21-39-35.jpg",
+        "photos/photo_2173@03-11-2026_21-39-35.jpg",
+        "photos/photo_2174@03-11-2026_21-39-36.jpg",
+        "photos/photo_2175@03-11-2026_21-39-36.jpg",
+        "photos/photo_2176@03-11-2026_21-39-36.jpg",
+        "photos/photo_2177@03-11-2026_21-39-36.jpg",
+        "photos/photo_2178@03-11-2026_21-39-36.jpg"
+      ],
+      "posts": [
+        2791,
+        2799
+      ]
+    },
+    {
+      "post": 2798,
+      "date": "2026-11-02",
+      "sku": "6297A28",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2584.MP4"
+      ],
+      "posts": [
+        2798
+      ]
+    },
+    {
+      "post": 2797,
+      "date": "2026-11-01",
+      "sku": "196-N",
+      "price": 1550000,
+      "sizes": [
+        38,
+        44
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "video_files/IMG_2573.MP4"
+      ],
+      "posts": [
+        2797
+      ]
+    },
+    {
+      "post": 2796,
+      "date": "2026-10-31",
+      "sku": "Y08K11-1",
+      "price": 2150000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "photos/photo_2151@10-10-2026_21-21-50.jpg",
+        "photos/photo_2152@10-10-2026_21-21-50.jpg",
+        "photos/photo_2153@10-10-2026_21-21-51.jpg",
+        "video_files/IMG_2346.MP4",
+        "video_files/IMG_2567.MP4"
+      ],
+      "posts": [
+        2762,
+        2777,
+        2796
+      ]
+    },
+    {
+      "post": 2794,
+      "date": "2026-10-31",
+      "sku": "932",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "photos/photo_2169@31-10-2026_16-23-13.jpg",
+        "photos/photo_2170@31-10-2026_16-23-13.jpg"
+      ],
+      "posts": [
+        2794
+      ]
+    },
+    {
+      "post": 2793,
+      "date": "2026-10-30",
+      "sku": "MC296A",
+      "price": 1550000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown",
+        "khaki"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2298.MP4",
+        "video_files/IMG_2554.MP4"
+      ],
+      "posts": [
+        2761,
+        2793
+      ]
+    },
+    {
+      "post": 2790,
+      "date": "2026-10-27",
+      "sku": "536",
+      "price": 1750000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy"
+      ],
+      "sole": null,
+      "media": [
+        "photos/photo_2154@16-10-2026_17-35-00.jpg",
+        "photos/photo_2155@16-10-2026_17-35-00.jpg",
+        "video_files/IMG_2510.MP4"
+      ],
+      "posts": [
+        2770,
+        2790
+      ]
+    },
+    {
+      "post": 2789,
+      "date": "2026-10-26",
+      "sku": "273-Z",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": "XL Extralight",
+      "media": [
+        "video_files/IMG_7398.MP4"
+      ],
+      "posts": [
+        2789
+      ]
+    },
+    {
+      "post": 2788,
+      "date": "2026-10-25",
+      "sku": "C181A",
+      "price": 1550000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "photos/photo_2161@19-10-2026_19-28-57.jpg",
+        "photos/photo_2162@19-10-2026_19-28-57.jpg",
+        "photos/photo_2163@19-10-2026_19-28-57.jpg",
+        "video_files/IMG_2494.MP4"
+      ],
+      "posts": [
+        2778,
+        2788
+      ]
+    },
+    {
+      "post": 2785,
+      "date": "2026-10-23",
+      "sku": "MC268A",
+      "price": 1750000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2465.MP4"
+      ],
+      "posts": [
+        2785
+      ]
+    },
+    {
+      "post": 2781,
+      "date": "2026-10-20",
+      "sku": "1387",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2379.MP4"
+      ],
+      "posts": [
+        2781
+      ]
+    },
+    {
+      "post": 2768,
+      "date": "2026-10-14",
+      "sku": "LG-01",
+      "price": 1850000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2329.MP4"
+      ],
+      "posts": [
+        2768
+      ]
+    },
+    {
+      "post": 2767,
+      "date": "2026-10-12",
+      "sku": "332-D",
+      "price": 1550000,
+      "sizes": [
+        38,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2230.MP4",
+        "video_files/IMG_2320.MP4"
+      ],
+      "posts": [
+        2760,
+        2767
+      ]
+    },
+    {
+      "post": 2765,
+      "date": "2026-10-11",
+      "sku": "GG3502-17",
+      "price": 1850000,
+      "sizes": [
+        39,
+        45
+      ],
+      "colors": [
+        "black",
+        "navy",
+        "brown"
+      ],
+      "sole": null,
+      "media": [
+        "video_files/IMG_2306.MP4"
+      ],
+      "posts": [
+        2765
+      ]
+    }
+  ]
+}
