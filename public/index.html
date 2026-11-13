@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Louis Gabor</title>
+    <meta http-equiv="refresh" content="0; url=./ru/" />
+    <script>
+      // Открываем сайт на языке, который посетитель выбирал раньше (по умолчанию — русский)
+      (function () {
+        var lang = "ru";
+        try {
+          var saved = localStorage.getItem("lg-locale");
+          if (saved === "uz" || saved === "ru") lang = saved;
+        } catch (e) {}
+        location.replace("./" + lang + "/" + location.search + location.hash);
+      })();
+    </script>
+    <style>
+      body { margin: 0; background: #ecedef; }
+    </style>
+  </head>
+  <body></body>
+</html>
