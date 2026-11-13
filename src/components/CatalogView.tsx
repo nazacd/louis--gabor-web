@@ -3,11 +3,16 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getDict, href } from "@/i18n/config";
-import { colors, hasStudio, products, types, type ColorKey, type TypeKey } from "@/data/catalog";
+import { colors, hasStudio, products, types, type ColorKey, type Product, type TypeKey } from "@/data/catalog";
 import { useUI } from "./Providers";
-import { FilmCard, StudioCard } from "./ProductCard";
+import { Tile } from "./ProductCard";
+import { Reveal } from "./Reveal";
 
 type Sort = "new" | "cheap" | "expensive";
+
+// студийные пары первыми, потом ролики, потом фото с телефона — чтобы сетка не выглядела пёстрой
+const tier = (p: Product) => (hasStudio(p) ? 0 : p.film ? 1 : 2);
+const SORTS: Sort[] = ["new", "cheap", "expensive"];
 
 export function CatalogView() {
   const { locale } = useUI();
@@ -31,110 +36,93 @@ export function CatalogView() {
     const sorted = [...filtered];
     if (sort === "cheap") sorted.sort((a, b) => a.price - b.price || b.post - a.post);
     else if (sort === "expensive") sorted.sort((a, b) => b.price - a.price || b.post - a.post);
-    else sorted.sort((a, b) => b.post - a.post);
+    else sorted.sort((a, b) => tier(a) - tier(b) || b.post - a.post);
     return sorted;
   }, [type, color, sort]);
 
-  const studio = list.filter(hasStudio);
-  const films = list.filter((p) => !hasStudio(p));
   const colorOptions = (Object.keys(colors) as ColorKey[]).filter((c) => products.some((p) => (!type || p.type === type) && p.colors.includes(c)));
   const setType = (k: TypeKey | null) => router.replace(href(locale, k ? `/catalog/?t=${k}` : "/catalog/"), { scroll: false });
+  const title = type ? types.find((ty) => ty.key === type)!.name[locale] : t.catalog.title;
 
   return (
     <div className="page">
-      <div className="container-x pt-10 md:pt-16">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-          <h1 className="display text-[52px] md:text-[88px]">{type ? types.find((ty) => ty.key === type)!.name[locale] : t.catalog.title}</h1>
-          <span className="text-[14px] text-muted">{t.catalog.models(list.length)}</span>
+      <div className="container-x wrap pt-10 md:pt-16">
+        <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+          <h1 className="title text-[44px] md:text-[56px]">{title}</h1>
+          <span className="label num text-muted">{t.catalog.models(list.length)}</span>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)]">
-            <button type="button" className="chip" aria-pressed={!type} onClick={() => setType(null)}>
+        {/* строка 1: разделы */}
+        <div className="no-scrollbar -mx-[var(--gutter)] mt-8 overflow-x-auto border-b border-line px-[var(--gutter)] [mask-image:linear-gradient(90deg,#000_82%,transparent)] md:[mask-image:none]">
+          <div className="flex w-max gap-8 whitespace-nowrap pr-[var(--gutter)]">
+            <button type="button" className="tab" aria-pressed={!type} onClick={() => setType(null)}>
               {t.catalog.all}
             </button>
             {types.map((ty) => (
-              <button key={ty.key} type="button" className="chip" aria-pressed={type === ty.key} onClick={() => setType(ty.key)}>
+              <button key={ty.key} type="button" className="tab" aria-pressed={type === ty.key} onClick={() => setType(ty.key)}>
                 {ty.name[locale]}
               </button>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="label mr-1 text-muted">{t.catalog.color}</span>
-            {colorOptions.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className="chip !h-9 !px-3"
-                aria-pressed={color === c}
-                onClick={() => setColor(color === c ? null : c)}
-              >
-                <span className="h-3 w-3 rounded-full ring-1 ring-black/15" style={{ background: colors[c].hex }} />
-                {colors[c].name[locale]}
-              </button>
-            ))}
-            <label className="ml-1 flex items-center">
-              <span className="sr-only">{t.catalog.sort}</span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as Sort)}
-                className="h-9 rounded-full border border-line bg-white px-3 text-[13px] font-medium outline-none focus:border-ink"
-              >
-                <option value="new">{t.catalog.sortDefault}</option>
-                <option value="cheap">{t.catalog.sortCheap}</option>
-                <option value="expensive">{t.catalog.sortExpensive}</option>
-              </select>
-            </label>
+        </div>
+
+        {/* строка 2: цвет слева, сортировка справа */}
+        <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="label text-muted sm:hidden">{t.catalog.color}</span>
+            <div className="-ml-[6px] flex shrink-0 gap-0.5 sm:gap-1">
+              {colorOptions.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-pressed={color === c}
+                  aria-label={colors[c].name[locale]}
+                  title={colors[c].name[locale]}
+                  onClick={() => setColor(color === c ? null : c)}
+                  className="chip-color-btn !h-[28px] !w-[28px] sm:!h-[30px] sm:!w-[30px]"
+                >
+                  <span className="chip-color !h-[16px] !w-[16px] sm:!h-[18px] sm:!w-[18px]" style={{ background: colors[c].hex }} />
+                </button>
+              ))}
+            </div>
+            <span className="hidden truncate text-[13px] text-muted sm:inline">{color ? colors[color].name[locale] : t.catalog.anyColor}</span>
           </div>
+          <button
+            type="button"
+            onClick={() => setSort(SORTS[(SORTS.indexOf(sort) + 1) % SORTS.length])}
+            className="tab whitespace-nowrap !text-ink"
+            aria-label={t.catalog.sort[sort]}
+          >
+            {t.catalog.sort[sort]} ↕
+          </button>
         </div>
       </div>
 
-      {list.length === 0 ? (
-        <div className="container-x flex flex-col items-center py-28 text-center">
-          <h2 className="display text-[32px]">{t.catalog.empty}</h2>
-          <p className="mt-3 text-[14px] text-muted">{t.catalog.emptyText}</p>
-          <button
-            type="button"
-            className="btn btn-ink mt-7"
-            onClick={() => {
-              setColor(null);
-              setType(null);
-            }}
-          >
-            {t.catalog.reset}
-          </button>
-        </div>
-      ) : (
-        <>
-          {studio.length > 0 && (
-            <section className="container-x pt-12 md:pt-16">
-              <div className="mb-8 flex items-baseline gap-3 border-t border-line pt-5">
-                <h2 className="text-[20px] font-semibold">{t.catalog.studio}</h2>
-                <span className="text-[13px] text-muted">{t.catalog.studioSub}</span>
-              </div>
-              <div className="grid gap-x-4 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
-                {studio.map((p) => (
-                  <StudioCard key={p.sku} product={p} />
-                ))}
-              </div>
-            </section>
-          )}
-          {films.length > 0 && (
-            <section id="films" className="container-x scroll-mt-[calc(var(--top-offset)+16px)] pb-24 pt-16 md:pb-32 md:pt-24">
-              <div className="mb-8 flex items-baseline gap-3 border-t border-line pt-5">
-                <h2 className="text-[20px] font-semibold">{t.catalog.films}</h2>
-                <span className="text-[13px] text-muted">{t.catalog.filmsSub}</span>
-              </div>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
-                {films.map((p) => (
-                  <FilmCard key={p.sku} product={p} />
-                ))}
-              </div>
-            </section>
-          )}
-          {films.length === 0 && <div className="pb-24 md:pb-32" />}
-        </>
-      )}
+      <div className="container-x wrap pb-24 pt-6 md:pb-32">
+        {list.length === 0 ? (
+          <div className="flex flex-col items-center py-28 text-center">
+            <h2 className="title text-[32px]">{t.catalog.empty}</h2>
+            <button
+              type="button"
+              className="btn btn-ink mt-8"
+              onClick={() => {
+                setColor(null);
+                setType(null);
+              }}
+            >
+              {t.catalog.reset}
+            </button>
+          </div>
+        ) : (
+          <div className="grid gap-x-3 gap-y-12 sm:gap-x-6 sm:gap-y-14" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 40vw), 1fr))" }}>
+            {list.map((p, i) => (
+              <Reveal key={`${p.sku}-${type}-${color}-${sort}`} delay={(i % 4) * 60}>
+                <Tile product={p} sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 50vw" />
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

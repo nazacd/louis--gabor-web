@@ -1,9 +1,6 @@
 import monogram from "@/brand/monogram.svg";
 
-/**
- * Монограмма векторизована из присланного логотипа. Надпись LOUIS GABOR набрана шрифтом сайта —
- * это временная замена, пока магазин не пришлёт фирменное начертание.
- */
+/** Буква G из логотипа магазина, векторизована. Цвет берёт от текста (currentColor). */
 export function Monogram({ className }: { className?: string }) {
   return (
     <span
@@ -22,20 +19,12 @@ export function Monogram({ className }: { className?: string }) {
   );
 }
 
-/** Синий квадрат с белой монограммой — как в присланном логотипе */
-export function LogoTile({ size = 32 }: { size?: number }) {
-  return (
-    <span className="flex items-center justify-center bg-blue text-white" style={{ width: size, height: size }} aria-hidden="true">
-      <Monogram className="w-[52%]" />
-    </span>
-  );
-}
-
-export function Logo({ tile = 32, text = "text-[13px]" }: { tile?: number; text?: string }) {
+/** Монограмма и название. Название набрано шрифтом сайта — временно, до фирменного начертания. */
+export function Logo({ mono = "w-[26px]", text = "text-[22px]" }: { mono?: string; text?: string }) {
   return (
     <span className="flex items-center gap-3">
-      <LogoTile size={tile} />
-      <span className={`wordmark ${text}`}>Louis Gabor</span>
+      <Monogram className={mono} />
+      <span className={`font-serif leading-none ${text}`}>Louis Gabor</span>
     </span>
   );
 }
